@@ -45,7 +45,7 @@ namespace EE_PRB_IJsjes.Wpf
 
         private void btnVerrassingsIjsje_Click(object sender, RoutedEventArgs e)
         {
-
+            ToonMelding("Er werd geen Verrassingsijsje aangemaakt", false);
         }
 
         private void btnVoegSmaakToe_Click(object sender, RoutedEventArgs e)
@@ -73,19 +73,19 @@ namespace EE_PRB_IJsjes.Wpf
             {
                 grdSmaken.Visibility = Visibility.Hidden;
                 cmbVerpakking.IsEnabled = true;
+                tbkFeedBack.Visibility = Visibility.Hidden;
             }
             else
             {
                 grdSmaken.Visibility = Visibility.Visible;
                 cmbVerpakking.IsEnabled = false;
-
             }
 
         }
 
         private void btnLeverIjsje_Click(object sender, RoutedEventArgs e)
         {
-
+            ToonMelding("Er werd geen ijsje aangemaakt.", false);
         }
 
         private void lstSmaken_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
