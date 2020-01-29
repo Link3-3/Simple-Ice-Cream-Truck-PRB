@@ -35,7 +35,7 @@ namespace EE_PRB_IJsjes.Wpf
 
         private void cmbVerpakking_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            huidigeVerpakking = (Verpakkingen)cmbVerpakking.SelectedItem;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -50,27 +50,36 @@ namespace EE_PRB_IJsjes.Wpf
 
         private void btnVoegSmaakToe_Click(object sender, RoutedEventArgs e)
         {
-            
-             int index = lstSmaken.SelectedIndex;
-             if (index != -1)
-                {
-                    string smaak = lstSmaken.SelectedItem.ToString();
-                    lstGekozenSmaken.Items.Add(smaak);
-                    lstSmaken.SelectedIndex = -1;
-                    tbkFeedBack.Visibility = Visibility.Hidden; 
+            // opvangen dat er niets werd geselecteerd..
+            int index = lstSmaken.SelectedIndex;
+            if (index != -1)
+            {
+                string smaak = lstSmaken.SelectedItem.ToString();
+                lstGekozenSmaken.Items.Add(smaak);
+                lstSmaken.SelectedIndex = -1;
+                tbkFeedBack.Visibility = Visibility.Hidden;
 
-                }
-                else
-                {
-                ToonMelding("Selecteer een smaak uit de lijst.", false);
+            }
+            else
+            {
+                ToonMelding("Selecteer een smaak uit de lijst 'Smaken'.", false);
                 tbkFeedBack.Visibility = Visibility.Visible;
             }
         }
 
         private void btnSchepIjsje_Click(object sender, RoutedEventArgs e)
         {
-            grdSmaken.Visibility = Visibility.Visible;
-            cmbVerpakking.IsEnabled = false;
+            if (!cmbVerpakking.IsEnabled)
+            {
+                grdSmaken.Visibility = Visibility.Hidden;
+                cmbVerpakking.IsEnabled = true;
+            }
+            else
+            {
+                grdSmaken.Visibility = Visibility.Visible;
+                cmbVerpakking.IsEnabled = false;
+
+            }
 
         }
 
@@ -81,12 +90,25 @@ namespace EE_PRB_IJsjes.Wpf
 
         private void lstSmaken_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
+            // hier moet er niets op gevevangen worden van selectie. 
+            // Er wordt sowieso iets geselecteerd..
+            int index = lstSmaken.SelectedIndex;
+                string smaak = lstSmaken.SelectedItem.ToString();
+                lstGekozenSmaken.Items.Add(smaak);
+                lstSmaken.SelectedIndex = -1;
+                tbkFeedBack.Visibility = Visibility.Hidden;
 
         }
 
         private void lstGekozenSmaken_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
+            // hier moet er niets op gevevangen worden van selectie. 
+            // Er wordt sowieso iets geselecteerd..
 
+            int index = lstGekozenSmaken.SelectedIndex;
+                lstGekozenSmaken.Items.RemoveAt(index);
+                lstGekozenSmaken.SelectedIndex = -1;
+                tbkFeedBack.Visibility = Visibility.Hidden;
         }
 
         void Opstarten()

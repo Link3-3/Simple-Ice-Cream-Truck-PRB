@@ -35,7 +35,7 @@ namespace IJsjes.Lib.Entities
 
         public override string ToString()
         {
-            return $"{SmaakSoort}: €{Prijs}";
+            return $"{SmaakSoort}: € {Prijs}";
         }
 
     }
