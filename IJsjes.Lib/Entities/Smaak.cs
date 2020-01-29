@@ -6,18 +6,11 @@ using System.Threading.Tasks;
 
 namespace IJsjes.Lib.Entities
 {
-    class Smaak
+    public class Smaak
     {
-        public Guid Id
-        {
-            get; set;
-        }
+        public Guid Id{ get; set;}
 
-        public decimal Prijs
-        {
-            get; set;
-
-        }
+        public decimal Prijs{ get; set;}
 
         public Smaken SmaakSoort { get; set; }
 
@@ -37,11 +30,12 @@ namespace IJsjes.Lib.Entities
             {
                 Id = Guid.NewGuid();
             }
+            MaxId++;
         }
 
         public override string ToString()
         {
-            return $"{SmaakSoort} {Prijs}";
+            return $"{SmaakSoort}: €{Prijs}";
         }
 
     }

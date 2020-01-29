@@ -40,7 +40,7 @@ namespace EE_PRB_IJsjes.Wpf
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
+            Opstarten();
         }
 
         private void btnVerrassingsIjsje_Click(object sender, RoutedEventArgs e)
@@ -50,11 +50,27 @@ namespace EE_PRB_IJsjes.Wpf
 
         private void btnVoegSmaakToe_Click(object sender, RoutedEventArgs e)
         {
+            
+             int index = lstSmaken.SelectedIndex;
+             if (index != -1)
+                {
+                    string smaak = lstSmaken.SelectedItem.ToString();
+                    lstGekozenSmaken.Items.Add(smaak);
+                    lstSmaken.SelectedIndex = -1;
+                    tbkFeedBack.Visibility = Visibility.Hidden; 
 
+                }
+                else
+                {
+                ToonMelding("Selecteer een smaak uit de lijst.", false);
+                tbkFeedBack.Visibility = Visibility.Visible;
+            }
         }
 
         private void btnSchepIjsje_Click(object sender, RoutedEventArgs e)
         {
+            grdSmaken.Visibility = Visibility.Visible;
+            cmbVerpakking.IsEnabled = false;
 
         }
 
@@ -71,6 +87,25 @@ namespace EE_PRB_IJsjes.Wpf
         private void lstGekozenSmaken_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
 
+        }
+
+        void Opstarten()
+        {
+            cmbVerpakking.Items.Add(Verpakkingen.Hoorntje);
+            cmbVerpakking.Items.Add(Verpakkingen.Potje);
+            cmbVerpakking.Items.Add(Verpakkingen.Wafel);
+
+            //lstSmaken.Items.Add(Smaken.Chocolade);
+            //lstSmaken.Items.Add(Smaken.Mokka);
+            //lstSmaken.Items.Add(Smaken.Vanille);
+
+            lstSmaken.ItemsSource = SmaakService.IjsSmaken;
+
+            grdSmaken.Visibility = Visibility.Hidden;
+            cmbVerpakking.SelectedIndex = 0;
+
+            //MaakVerrassingsijsje.. 
+            tbkFeedBack.Visibility = Visibility.Hidden;
         }
     }
 }
