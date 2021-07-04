@@ -7,6 +7,5 @@ using System.Threading.Tasks;
 namespace IJsjes.Lib.Entities
 {
     public enum Smaken { Chocolade, Mokka, Vanille }
-
     public enum Verpakkingen { Hoorntje, Potje, Wafel }
 }

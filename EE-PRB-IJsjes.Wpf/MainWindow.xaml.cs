@@ -22,112 +22,102 @@ namespace EE_PRB_IJsjes.Wpf
     /// </summary>
     public partial class MainWindow : Window
     {
-
-        //List<Ijs> verkochteIjsjes = new List<Ijs>();
-        //Ijs huidigIjsje;
+        List<Ijs> verkochteIjsjes = new List<Ijs>();
+        Ijs huidigIjsje;
         Verpakkingen huidigeVerpakking;
-
         public MainWindow()
         {
             InitializeComponent();
-
         }
-
-        private void cmbVerpakking_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            huidigeVerpakking = (Verpakkingen)cmbVerpakking.SelectedItem;
-        }
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Opstarten();
+            LoadAllControls();
         }
-
-        private void btnVerrassingsIjsje_Click(object sender, RoutedEventArgs e)
+        private void cmbVerpakking_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ToonMelding("Er werd geen Verrassingsijsje aangemaakt", false);
-        }
-
-        private void btnVoegSmaakToe_Click(object sender, RoutedEventArgs e)
-        {
-            // opvangen dat er niets werd geselecteerd..
-            int index = lstSmaken.SelectedIndex;
-            if (index != -1)
+            if (cmbVerpakking.SelectedIndex != -1)
             {
-                string smaak = lstSmaken.SelectedItem.ToString();
-                lstGekozenSmaken.Items.Add(smaak);
-                lstSmaken.SelectedIndex = -1;
-                tbkFeedBack.Visibility = Visibility.Hidden;
-
-            }
-            else
-            {
-                ToonMelding("Selecteer een smaak uit de lijst 'Smaken'.", false);
-                tbkFeedBack.Visibility = Visibility.Visible;
+                huidigeVerpakking = (Verpakkingen)cmbVerpakking.SelectedItem;
+                btnSchepIjsje.IsEnabled = true;
             }
         }
-
         private void btnSchepIjsje_Click(object sender, RoutedEventArgs e)
         {
-            if (!cmbVerpakking.IsEnabled)
+            if (grdSmaken.Visibility == Visibility.Visible)
             {
                 grdSmaken.Visibility = Visibility.Hidden;
-                cmbVerpakking.IsEnabled = true;
-                tbkFeedBack.Visibility = Visibility.Hidden;
+                LoadAllControls();
             }
             else
-            {
                 grdSmaken.Visibility = Visibility.Visible;
-                cmbVerpakking.IsEnabled = false;
-            }
-
         }
-
+        private void btnVerrassingsIjsje_Click(object sender, RoutedEventArgs e)
+        {
+            lstGekozenSmaken.Items.Clear();
+            huidigIjsje = SmaakService.MaakVerrassingsIjsje(huidigeVerpakking);
+            foreach (Smaak item in huidigIjsje.Bollen)
+                lstGekozenSmaken.Items.Add(item);
+        }
         private void btnLeverIjsje_Click(object sender, RoutedEventArgs e)
         {
-            ToonMelding("Er werd geen ijsje aangemaakt.", false);
+            if (huidigIjsje == null)
+            {
+                List<Smaak> huidigeSmaken = new List<Smaak>();
+                foreach (Smaak item in lstGekozenSmaken.Items)
+                    huidigeSmaken.Add(item);
+                huidigIjsje = SmaakService.MaakIjsje(huidigeSmaken, huidigeVerpakking);
+            }
+            UpdateVerkochteIjsjes();
+            LoadAllControls();
         }
-
         private void lstSmaken_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
-            // hier moet er niets op gevevangen worden van selectie. 
-            // Er wordt sowieso iets geselecteerd..
-            int index = lstSmaken.SelectedIndex;
-                string smaak = lstSmaken.SelectedItem.ToString();
+            if (lstSmaken.SelectedIndex != -1)
+            {
+                Smaak smaak = (Smaak)lstSmaken.SelectedItem;
                 lstGekozenSmaken.Items.Add(smaak);
-                lstSmaken.SelectedIndex = -1;
-                tbkFeedBack.Visibility = Visibility.Hidden;
-
+                if (huidigIjsje != null)
+                    huidigIjsje.Bollen.Add(smaak);
+            }
         }
-
         private void lstGekozenSmaken_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
-            // hier moet er niets op gevevangen worden van selectie. 
-            // Er wordt sowieso iets geselecteerd..
-
-            int index = lstGekozenSmaken.SelectedIndex;
-                lstGekozenSmaken.Items.RemoveAt(index);
-                lstGekozenSmaken.SelectedIndex = -1;
-                tbkFeedBack.Visibility = Visibility.Hidden;
+            if (lstGekozenSmaken.SelectedIndex != -1)
+            {
+                int smaak = lstGekozenSmaken.SelectedIndex;
+                lstGekozenSmaken.Items.RemoveAt(smaak);
+                if (huidigIjsje != null)
+                    huidigIjsje.Bollen.RemoveAt(smaak);
+            }
         }
-
-        void Opstarten()
+        private void btnVoegSmaakToe_Click(object sender, RoutedEventArgs e)
         {
-            cmbVerpakking.Items.Add(Verpakkingen.Hoorntje);
-            cmbVerpakking.Items.Add(Verpakkingen.Potje);
-            cmbVerpakking.Items.Add(Verpakkingen.Wafel);
-
-            //lstSmaken.Items.Add(Smaken.Chocolade);
-            //lstSmaken.Items.Add(Smaken.Mokka);
-            //lstSmaken.Items.Add(Smaken.Vanille);
-
+            if (lstSmaken.SelectedIndex != -1)
+            {
+                Smaak smaak = (Smaak)lstSmaken.SelectedItem;
+                lstGekozenSmaken.Items.Add(smaak);
+                if (huidigIjsje != null)
+                    huidigIjsje.Bollen.Add(smaak);
+            }
+        }
+        private void UpdateVerkochteIjsjes()
+        {
+            verkochteIjsjes.Add(huidigIjsje);
+            lstIjsjes.Items.Clear();
+            foreach (var item in verkochteIjsjes)
+                lstIjsjes.Items.Add(item);
+            lblOmzet.Content = $"{verkochteIjsjes.Sum(smaak => smaak.TotaalBedrag).ToString("C2")}";
+        }
+        private void LoadAllControls()
+        {
+            cmbVerpakking.ItemsSource = Enum.GetValues(typeof(Verpakkingen));
+            cmbVerpakking.SelectedIndex = -1;
+            btnSchepIjsje.IsEnabled = false;
             lstSmaken.ItemsSource = SmaakService.IjsSmaken;
-
+            lstSmaken.SelectedIndex = -1;
+            lstGekozenSmaken.Items.Clear();
             grdSmaken.Visibility = Visibility.Hidden;
-            cmbVerpakking.SelectedIndex = 0;
-
-            //MaakVerrassingsijsje.. 
-            tbkFeedBack.Visibility = Visibility.Hidden;
+            huidigIjsje = null;
         }
     }
 }
